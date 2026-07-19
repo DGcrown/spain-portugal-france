@@ -3,606 +3,638 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>西葡法 29 日全景慢活假期</title>
-    
-    <!-- 引入 Google Fonts & FontAwesome -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- 引入 Tailwind CSS -->
+    <title>西葡與法國慢活旅遊計畫書</title>
+    <!-- Open Graph tags for LINE/Facebook preview -->
+    <meta property="og:title" content="西葡與法國慢活旅遊計畫書">
+    <meta property="og:description" content="2026 女子限定！伊比利半島至法蘭西的浪漫慢活 30 日深度遊計畫書。">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?q=80&w=1200&auto=format&fit=crop">
+    <meta property="og:type" content="website">
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- 引入 Leaflet 實感互動地圖套件 -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
-
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-main: #FDFBF7;      
-            --bg-accent: #F4EFE6;    
-            --text-main: #3E362E;    
-            --text-light: #6E6256;   
-            --accent-gold: #A68A64;  
-            --accent-green: #607254; 
+        body { font-family: 'Noto Sans TC', sans-serif; background-color: #FDFBF7; color: #3E362E; }
+        h1, h2, h3, .serif-font { font-family: 'Noto Serif TC', serif; }
+        .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
+        .tab-btn.active { border-bottom: 3px solid #A68A64; color: #A68A64; font-weight: bold; }
+        .timeline-line::before {
+            content: ''; position: absolute; top: 0; bottom: 0; left: 0px; width: 2px;
+            background: linear-gradient(to bottom, #A68A64, #E8E0D5); z-index: 0;
         }
-
-        body {
-            font-family: 'Noto Sans TC', sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            margin: 0;
-            padding: 0;
-        }
-
-        .font-serif-tc { font-family: 'Noto Serif TC', serif !important; }
-        .font-serif-en { font-family: 'Playfair Display', serif !important; }
-
-        #ai-sidebar { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .ai-message { max-width: 85%; word-break: break-word; }
-
-        .tab-btn.active {
-            border-color: var(--accent-gold);
-            color: var(--accent-gold);
-            background-color: white;
-            font-weight: bold;
-        }
-
-        .leaflet-container { background-color: #f5f2eb !important; font-family: 'Noto Sans TC', sans-serif !important; }
-        .leaflet-popup-content-wrapper {
-            background: #FDFBF7 !important; color: #3E362E !important;
-            border-radius: 16px !important; border: 1px solid #E8E0D5 !important;
-            box-shadow: 0 4px 12px rgba(62, 54, 46, 0.08) !important;
-        }
-        .leaflet-popup-tip { background: #FDFBF7 !important; }
-
-        .custom-pin-spot { background: #A68A64; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
-        .custom-pin-food { background: #607254; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 6px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; }
-
-        @media print { .no-print { display: none !important; } body { background-color: white; color: black; } }
+        #map { height: 100%; width: 100%; border-radius: 1rem; z-index: 1; }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d4cfc9; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #A68A64; }
+        
+        /* Custom Leaflet Popup */
+        .leaflet-popup-content-wrapper { background: #FDFBF7; color: #3E362E; border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border: 1px solid #E8E0D5;}
+        .leaflet-popup-tip { background: #FDFBF7; }
+        .custom-pin-gold { background-color: #D4AF37; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); width: 20px; height: 20px; display: inline-block; }
+        .custom-pin-green { background-color: #607254; border: 2px solid white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.3); width: 16px; height: 16px; display: inline-block; }
     </style>
 </head>
-<body class="bg-[#FDFBF7] min-h-screen pb-24">
+<body class="antialiased selection:bg-[#A68A64] selection:text-white pb-20">
 
-    <!-- 導覽頂欄 -->
-    <header class="bg-white border-b border-[#E8E0D5] py-4 px-6 md:px-12 flex justify-between items-center sticky top-0 z-50 shadow-sm no-print">
-        <div class="flex items-center gap-3">
-            <span class="bg-[#A68A64] text-white p-2 rounded-lg"><i class="fa-solid fa-compass text-lg"></i></span>
-            <div>
-                <h1 class="text-lg font-bold text-[#3E362E] font-serif-tc">西葡法 29 日全景旅遊計劃書</h1>
-                <p class="text-xs text-gray-500">2026年9月1日 - 9月29日 · 多國獨旅與旅伴會合版</p>
+    <!-- Fixed Top Navigation -->
+    <nav class="fixed top-0 w-full glass-panel z-50 shadow-sm transition-all duration-300">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">✨</span>
+                    <span class="font-bold text-xl serif-font tracking-wider text-[#3E362E]">西葡與法國慢活旅遊計畫書</span>
+                </div>
             </div>
         </div>
-    </header>
-
-    <!-- 主要內容區 -->
-    <main class="max-w-6xl mx-auto px-4 py-8" id="print-area">
         
-        <!-- 簡報封面 -->
-        <div class="slide-page bg-white border border-[#E8E0D5] rounded-3xl p-8 md:p-16 mb-8 shadow-sm relative overflow-hidden flex flex-col md:flex-row gap-8 items-center">
-            <div class="absolute top-0 right-0 w-32 h-32 bg-[#F4EFE6] rounded-full transform translate-x-12 -translate-y-12"></div>
-            
-            <div class="w-full md:w-[60%] z-10">
-                <span class="text-[#A68A64] tracking-widest text-xs font-serif-en uppercase font-bold bg-[#F4EFE6] px-3 py-1.5 rounded-full inline-block mb-4">AUTUMN GRAND TOUR 2026</span>
-                <h1 class="text-5xl md:text-6xl font-serif-tc font-bold text-[#3E362E] leading-tight mb-6">
-                    西葡法<br>
-                    <span class="font-serif-en text-6xl md:text-7xl font-light text-[#A68A64]">29</span>
-                    <span class="text-3xl md:text-4xl font-light text-[#A68A64]">日全景計畫書</span>
-                </h1>
-                
-                <div class="border-l-4 border-[#A68A64] pl-4 mb-6">
-                    <p class="text-xs text-[#8B7C6E] font-bold tracking-[0.2em]">私人客製 · 方案A (先苦後甜巴黎版)</p>
-                </div>
-                
-                <!-- 航班資訊 -->
-                <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-100 text-xs text-[#6E6256] space-y-2">
-                    <div class="font-bold text-[#A68A64] flex items-center gap-2">
-                        <i class="fa-solid fa-plane-departure"></i>
-                        <span>阿聯酋航空 (Emirates) 往返航班資訊</span>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                        <div>
-                            <strong class="text-[#3E362E]">去程 (TPE ➔ LIS)：</strong><br>
-                            9/1 (二) 23:50 台北 TPE (T2) 出發 <br>
-                            9/2 12:35 抵達里斯本 LIS (T1)<br>
-                            <span class="text-gray-400">航班代碼：EK367 ➔ EK191</span>
-                        </div>
-                        <div>
-                            <strong class="text-[#3E362E]">回程 (CDG ➔ TPE)：</strong><br>
-                            9/29 (二) 下午 巴黎戴高樂 CDG 出發 <br>
-                            9/30 抵達台北 TPE (T2)<br>
-                            <span class="text-gray-400">行李直掛 · 巴黎退稅</span>
-                        </div>
-                    </div>
+        <!-- Tab Navigation -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex overflow-x-auto hide-scrollbar gap-6 text-sm text-gray-500">
+            <button onclick="switchTab('tab-iberia')" id="btn-tab-iberia" class="tab-btn active pb-3 whitespace-nowrap transition-colors hover:text-[#A68A64]">🍷 第一樂章：西葡慢活 (9/1-9/15)</button>
+            <button onclick="switchTab('tab-france')" id="btn-tab-france" class="tab-btn pb-3 whitespace-nowrap transition-colors hover:text-[#A68A64]">🥐 第二樂章：法國慢活 (9/15-9/29)</button>
+            <button onclick="switchTab('tab-tickets')" id="btn-tab-tickets" class="tab-btn pb-3 whitespace-nowrap transition-colors hover:text-[#A68A64]">🎟️ 待預訂票券</button>
+            <button onclick="switchTab('tab-map')" id="btn-tab-map" class="tab-btn pb-3 whitespace-nowrap transition-colors hover:text-[#A68A64]">🗺️ 實感地圖與美食</button>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="pt-28 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <!-- TAB 1: 西葡行程 -->
+        <div id="tab-iberia" class="tab-content block">
+            <!-- Hero Section -->
+            <div class="relative w-full h-[400px] rounded-3xl overflow-hidden mb-12 shadow-xl">
+                <img src="https://images.unsplash.com/photo-1511527661048-7fe73d85e9a4?q=80&w=1600&auto=format&fit=crop" 
+                     alt="巴塞隆納聖家堂" 
+                     referrerpolicy="no-referrer"
+                     onerror="this.src='https://images.unsplash.com/photo-1583422409516-1500d47348bf?q=80&w=1600&auto=format&fit=crop';"
+                     class="absolute inset-0 w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div class="absolute bottom-8 left-8 right-8">
+                    <span class="bg-[#A68A64] text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider mb-3 inline-block shadow-lg">PART 1 : IBERIAN PENINSULA</span>
+                    <h1 class="text-4xl sm:text-5xl font-bold text-white mb-2 leading-tight drop-shadow-md">南歐豔陽與大航海時代</h1>
+                    <p class="text-white/90 text-lg flex items-center gap-2 drop-shadow">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        2026.09.01 - 09.15 (15 天)
+                    </p>
                 </div>
             </div>
-            
-            <div class="w-full md:w-[40%] h-64 md:h-[340px] rounded-2xl overflow-hidden shadow-md relative bg-[#F4EFE6] border border-[#E8E0D5]">
-                <img src="https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=800&q=80" 
-                     alt="Paris" 
-                     class="w-full h-full object-cover transform hover:scale-105 transition duration-700"
-                     referrerpolicy="no-referrer">
-                <div class="absolute bottom-4 left-4 z-20 bg-black/40 backdrop-blur-sm text-white px-3 py-1.5 rounded-lg text-xs">
-                    <span class="font-serif-en italic">Paris, France</span>
-                </div>
-            </div>
-        </div>
 
-        <!-- 互動分頁按鈕 -->
-        <div class="flex flex-wrap gap-2 mb-6 border-b border-[#E8E0D5] pb-4 no-print">
-            <button onclick="switchTab('itinerary')" id="btn-itinerary" class="tab-btn active px-5 py-3 rounded-xl border border-transparent text-[#6E6256] hover:bg-[#F4EFE6] transition flex items-center gap-2 text-sm">
-                <i class="fa-solid fa-calendar-alt"></i>
-                <span>📅 29天每日動線</span>
-            </button>
-            <button onclick="switchTab('map-infographic')" id="btn-map-infographic" class="tab-btn px-5 py-3 rounded-xl border border-transparent text-[#6E6256] hover:bg-[#F4EFE6] transition flex items-center gap-2 text-sm">
-                <i class="fa-solid fa-map-location-dot animate-pulse"></i>
-                <span class="font-bold text-[#A68A64]">🗺️ 實感地圖 (擴充法國)</span>
-            </button>
-            <button onclick="switchTab('pending-bookings')" id="btn-pending-bookings" class="tab-btn px-5 py-3 rounded-xl border border-transparent text-[#6E6256] hover:bg-[#F4EFE6] transition flex items-center gap-2 text-sm">
-                <i class="fa-solid fa-ticket-simple"></i>
-                <span>🎟️ 待預訂票券 (擴充TGV)</span>
-            </button>
-            <button onclick="switchTab('transport-spec')" id="btn-transport-spec" class="tab-btn px-5 py-3 rounded-xl border border-transparent text-[#6E6256] hover:bg-[#F4EFE6] transition flex items-center gap-2 text-sm">
-                <i class="fa-solid fa-calculator"></i>
-                <span>🚆 跨國交通比價</span>
-            </button>
-        </div>
-
-        <!-- Tab 1: 每日行程 -->
-        <div id="tab-itinerary" class="tab-content">
-            <div class="bg-white border border-[#E8E0D5] rounded-3xl p-6 md:p-8 shadow-sm">
-                <div class="flex items-center justify-between mb-8 pb-4 border-b border-[#F4EFE6]">
-                    <h2 class="text-2xl font-serif-tc font-bold text-[#3E362E] flex items-center gap-2">
-                        <i class="fa-solid fa-map-marked-alt text-[#A68A64]"></i>
-                        <span>1-29天無縫銜接行程表</span>
-                    </h2>
-                </div>
-
-                <div class="space-y-12 relative pl-4 border-l-2 border-[#E8E0D5]" id="itinerary-cards-container">
-
-                    <!-- ================= 西葡 1-14 天 (保持不變) ================= -->
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-1">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/1 (二) DAY 1</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【桃園出發】台北 TPE ➔ 杜拜 ➔ 里斯本 LIS</h3>
-                            <p class="text-sm text-[#6E6256] mt-2 leading-relaxed card-desc">晚上 21:00 於桃園機場第二航廈阿聯酋櫃檯集合辦理登機。搭乘 <strong>EK367</strong>。</p>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-2">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/2 (三) DAY 2</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【葡萄牙里斯本】抵達 ➔ 蛋塔巡禮 ➔ 老城電車 ➔ 靈魂法朵(Fado)晚餐 🎶</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div><strong class="text-[#3E362E]">12:35</strong> 抵達里斯本機場 (T1)。下午搭 28 號電車，晚上聽法朵音樂。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-3">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/3 (四) DAY 3</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【葡萄牙里斯本】大航海時代貝倫區 ➔ 創始老店蛋塔 ➔ 文創園區</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>搭輕軌直達貝倫區，遊覽熱羅尼莫斯修道院與貝倫塔，晚餐於 Time Out Market。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-4">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#607254] text-white px-2.5 py-1 rounded-full font-bold">9/4 (五) DAY 4</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【里斯本】辛特拉 (Sintra) 童話城堡一日遊 🏰</h3>
-                            <div class="bg-[#FFFDF9] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>參觀佩納宮與雷加萊拉莊園。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-5">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/5 (六) DAY 5</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【西班牙塞維亞】搭乘直飛航班 ➔ 聖十字區夕陽漫步 🍷</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>下午搭 Ryanair 飛抵塞維亞，晚餐吃最古老塔帕斯 El Rinconcillo。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-6">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/6 (日) DAY 6</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【西班牙塞維亞】最美西班牙廣場 ➔ 都市天傘漫步 ➔ 佛朗明哥秀 💃</h3>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-7">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/7 (一) DAY 7</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【西班牙塞維亞】皇家王宮古殿探秘 ➔ 主教座堂黃金鐘樓登頂</h3>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-8">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/8 (二) DAY 8</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【西班牙格拉納達】搭巴士慢遊 ➔ 阿爾罕布拉紅堡 🏰</h3>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-9">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/9 (三) DAY 9</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【西班牙馬德里】高鐵速達馬德里 ➔ 聖米格爾市場大吃大喝 🍷</h3>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-10">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/10 (四) DAY 10</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【西班牙馬德里】麗池公園野餐 ➔ 經典甜點百年吉拿棒 🎨</h3>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-11">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/11 (五) DAY 11</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【西班牙巴塞隆納】超速高鐵直奔地中海 ➔ 巴塞隆內塔海灘 Sunset 🌊</h3>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-12">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/12 (六) DAY 12</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【西班牙巴塞隆納】高第極致美學 ➔ 聖家堂晨光 ➔ 奎爾公園</h3>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-13">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/13 (日) DAY 13</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【巴塞隆納】蒙特塞拉特聖山 (Montserrat) 半日遊 ⛰️</h3>
-                            <div class="bg-[#FFFDF9] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>與朋友一起搭乘 R5 火車與登山纜車前往聖山，聽男童合唱團，兩人互相照應最安心！</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-14">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#A68A64] px-2.5 py-1 rounded-full font-bold">9/14 (一) DAY 14</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【巴塞隆納】巴特婁之家 ➔ 米拉之家 ➔ 最終大血拼</h3>
-                        </div>
-                    </div>
-
-                    <!-- ================= 法國 15-29 天 (全新擴充) ================= -->
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card mt-8" id="day-card-15">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-emerald-50 text-[#607254] px-2.5 py-1 rounded-full font-bold border border-emerald-100">9/15 (二) DAY 15 · 跨國移動日</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【巴塞隆納 ➔ 南法亞維儂】朋友返台 ➔ 獨旅高鐵衝南法 🚄</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div><strong class="text-[#3E362E]">中午：</strong> 依依不捨送朋友去巴塞隆納機場。</div>
-                                <div><strong class="text-[#3E362E]">16:31 - 20:52：</strong> 獨旅正式開始！搭乘跨國高鐵 (TGV) 享受便宜 30 歐元的早鳥票直達亞維儂，抵達後轉搭 5 分鐘接駁車進城牆內飯店。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-16">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#607254] px-2.5 py-1 rounded-full font-bold">9/16 (三) DAY 16</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【南法普羅旺斯】亞維儂歷史古蹟巡禮</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>早上參觀氣勢磅礡的教皇宮，下午漫步聖貝內澤斷橋。中午吃頓 15 歐元的法式平價小酒館午間套餐。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-17">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#607254] px-2.5 py-1 rounded-full font-bold">9/17 (四) DAY 17</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【南法普羅旺斯】最美山城一日遊（石頭城＋紅土城）</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>搭乘 Zou! 區域巴士，慢慢走訪依山而建的 Gordes (石頭城) 與魔幻色彩的 Roussillon (紅土城)。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-18">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#607254] px-2.5 py-1 rounded-full font-bold">9/18 (五) DAY 18</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【南法普羅旺斯】梵谷足跡與小鎮市集</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>前往 Saint-Rémy-de-Provence 感受梵谷的藝術氣息，逛南法最道地的生活市集。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-19">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#607254] px-2.5 py-1 rounded-full font-bold">9/19 (六) DAY 19</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【南法普羅旺斯】亞維儂週末放空 ☀️</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>將體力儲存 100%！坐在羅訥河畔的露天咖啡廳發呆，寫明信片。不用急著打包行李，因為里昂縮減為兩天。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-20">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#607254] px-2.5 py-1 rounded-full font-bold">9/20 (日) DAY 20</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【南法 ➔ 里昂】TGV速達 ➔ 富維耶聖母院看日落</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>中午搭 TGV 僅 1 小時即可抵達里昂。下午悠閒搭纜車上富維耶聖母院看紅色屋頂。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-21">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#607254] px-2.5 py-1 rounded-full font-bold">9/21 (一) DAY 21</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【里昂】美食之都 ➔ 傳統 Bouchon 紅酒館晚宴 🍷</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>漫步舊城區與秘密通道。晚上避開週末人潮，享受道地的 Bouchon 油封鴨與魚肉泥丸。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 方案 A：巴黎會合與錯開大魔王 -->
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card mt-8" id="day-card-22">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-rose-400 border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-rose-50 text-rose-600 px-2.5 py-1 rounded-full font-bold border border-rose-100">9/22 (二) DAY 22 · 新旅伴會合</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【里昂 ➔ 巴黎】飯店會合 ➔ 塞納河畔看鐵塔點燈 ✨</h3>
-                            <div class="bg-[#FFFDF9] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>中午搭 TGV 抵達巴黎。與剛下飛機的新旅伴會合，晚上吃頓法式餐，早點休息為明日充電。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-23">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-emerald-50 text-[#607254] px-2.5 py-1 rounded-full font-bold border border-emerald-100">9/23 (三) DAY 23 · 方案 A</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【魔王一】夢幻聖米歇爾山大巴一日遊 👑</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div><strong class="text-rose-600">黃金策略：週三人潮最少！</strong> 新旅伴體力正好，搭乘接駁巴士一路睡到諾曼第，解鎖夢幻海上孤島。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-24">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#607254] px-2.5 py-1 rounded-full font-bold">9/24 (四) DAY 24</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【體力修復日】巴黎市區漫步 ➔ 瑪黑區街拍與左岸咖啡 ☕</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div><strong class="text-[#3E362E]">不排行程！</strong> 睡到自然醒。下午逛文青瑪黑區，坐在花神咖啡館放空，拯救昨日的大腿酸痛。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-25">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-emerald-50 text-[#607254] px-2.5 py-1 rounded-full font-bold border border-emerald-100">9/25 (五) DAY 25 · 方案 A</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【魔王二】巴黎迪士尼樂園 🏰</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div><strong class="text-rose-600">黃金策略：避開週末！</strong> 體力充飽後，在週間殺進迪士尼盡情拍照，一路玩到看夢幻城堡煙火秀。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-26">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#607254] px-2.5 py-1 rounded-full font-bold">9/26 (六) DAY 26</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【巴黎週末】旺夫跳蚤市場尋寶與奧賽美術館</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>死守市區！早上逛跳蚤市場買古董，下午看印象派畫作。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-27">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#607254] px-2.5 py-1 rounded-full font-bold">9/27 (日) DAY 27</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【巴黎週末】羅浮宮與巴士底市集</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>體驗當地人的週末市集，下午朝聖羅浮宮三寶。</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-28">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-[#F4EFE6] text-[#607254] px-2.5 py-1 rounded-full font-bold">9/28 (一) DAY 28</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【優雅採買日】奧斯曼大道精品與藥妝大補貨 🛍️</h3>
-                            <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-xs text-[#6E6256] space-y-2 border border-[#E8E0D5] card-desc">
-                                <div>在老佛爺百貨與春天百貨優雅刷卡。晚上回飯店核對退稅單據並輕鬆打包行李，完全不趕路！</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="relative flex flex-col gap-2 items-start itinerary-card" id="day-card-29">
-                        <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#3E362E] border-4 border-white"></div>
-                        <div class="flex-1 w-full">
-                            <span class="text-xs bg-gray-100 text-[#3E362E] px-2.5 py-1 rounded-full font-bold">9/29 (二) DAY 29</span>
-                            <h3 class="text-lg font-bold text-[#3E362E] mt-2 card-title">【完美賦歸】巴黎 CDG 機場 ➔ 台北 TPE</h3>
-                            <p class="text-sm text-[#6E6256] mt-2 leading-relaxed card-desc">
-                                早上在飯店吃個悠閒可頌。中午帶著打包好的行李搭乘 RER B 線前往戴高樂機場辦理退稅，搭乘下午班機優雅回台！
-                            </p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab 2: 🗺️ 實感地圖 (含法國城市擴充) -->
-        <div id="tab-map-infographic" class="tab-content hidden">
-            <div class="bg-white border border-[#E8E0D5] rounded-3xl p-6 md:p-8 shadow-sm">
-                
-                <div class="text-center max-w-xl mx-auto mb-8">
-                    <span class="text-[#A68A64] tracking-widest text-[11px] font-serif-en uppercase font-bold bg-[#F4EFE6] px-3.5 py-1.5 rounded-full inline-block mb-3">FRANCE EXPANSION</span>
-                    <h2 class="text-2xl md:text-3xl font-serif-tc font-bold text-[#3E362E] mb-2">西葡法 2合1 實感地圖</h2>
-                    
-                    <!-- 頂部分類切換按鈕 (擴增法國三城) -->
-                    <div class="flex flex-wrap justify-center gap-2 mt-6">
-                        <button onclick="selectMapCity('lisbon')" id="map-btn-lisbon" class="map-city-btn px-4 py-2 rounded-xl text-xs font-bold border transition bg-white text-[#6E6256] border-[#E8E0D5] hover:bg-[#F4EFE6]">🇵🇹 里斯本</button>
-                        <button onclick="selectMapCity('seville')" id="map-btn-seville" class="map-city-btn px-4 py-2 rounded-xl text-xs font-bold border transition bg-white text-[#6E6256] border-[#E8E0D5] hover:bg-[#F4EFE6]">🇪🇸 塞維亞</button>
-                        <button onclick="selectMapCity('barcelona')" id="map-btn-barcelona" class="map-city-btn px-4 py-2 rounded-xl text-xs font-bold border transition bg-white text-[#6E6256] border-[#E8E0D5] hover:bg-[#F4EFE6]">🇪🇸 巴塞隆納</button>
-                        <button onclick="selectMapCity('avignon')" id="map-btn-avignon" class="map-city-btn px-4 py-2 rounded-xl text-xs font-bold border transition bg-[#607254] text-white shadow-sm">🇫🇷 亞維儂</button>
-                        <button onclick="selectMapCity('lyon')" id="map-btn-lyon" class="map-city-btn px-4 py-2 rounded-xl text-xs font-bold border transition bg-white text-[#6E6256] border-[#E8E0D5] hover:bg-[#F4EFE6]">🇫🇷 里昂</button>
-                        <button onclick="selectMapCity('paris')" id="map-btn-paris" class="map-city-btn px-4 py-2 rounded-xl text-xs font-bold border transition bg-white text-[#6E6256] border-[#E8E0D5] hover:bg-[#F4EFE6]">🇫🇷 巴黎</button>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-                    <!-- 左側地圖 -->
-                    <div class="lg:col-span-7 bg-[#FAF6EE] border border-[#EBE1D3] rounded-3xl p-3 relative shadow-inner min-h-[460px]">
-                        <div id="leaflet-map" class="w-full h-full min-h-[440px] rounded-2xl shadow-inner border border-[#E8E0D5] z-10"></div>
-                    </div>
-
-                    <!-- 右側行程說明 (僅示範擴充的法國) -->
-                    <div class="lg:col-span-5 flex flex-col justify-start">
-                        
-                        <!-- 🇫🇷 亞維儂 -->
-                        <div id="combined-timeline-avignon" class="combined-timeline space-y-4">
-                            <div class="bg-white border border-[#E8E0D5] rounded-2xl p-4 shadow-sm">
-                                <h4 class="font-serif-tc font-bold text-sm text-[#3E362E] mb-2">1. 教皇宮 ➔ 平價小酒館</h4>
-                                <p class="text-xs text-[#6E6256] leading-relaxed">
-                                    • <strong>逛景點：</strong>參觀雄偉的 <strong>教皇宮</strong>。<br>
-                                    • <strong>旁邊必吃：</strong>廣場旁的法式 Bistrot，點 15 歐元的午間套餐。
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- 🇫🇷 里昂 -->
-                        <div id="combined-timeline-lyon" class="combined-timeline space-y-4 hidden">
-                            <div class="bg-white border border-[#E8E0D5] rounded-2xl p-4 shadow-sm">
-                                <h4 class="font-serif-tc font-bold text-sm text-[#3E362E] mb-2">1. 舊城區 ➔ 傳統 Bouchon</h4>
-                                <p class="text-xs text-[#6E6256] leading-relaxed">
-                                    • <strong>逛景點：</strong>漫步舊城區與秘密通道 Traboules。<br>
-                                    • <strong>旁邊必吃：</strong>在百年紅酒館吃正宗油封鴨與里昂沙拉。
-                                </p>
-                            </div>
-                        </div>
-
-                        <!-- 🇫🇷 巴黎 -->
-                        <div id="combined-timeline-paris" class="combined-timeline space-y-4 hidden">
-                            <div class="bg-white border border-[#E8E0D5] rounded-2xl p-4 shadow-sm">
-                                <h4 class="font-serif-tc font-bold text-sm text-[#3E362E] mb-2">1. 羅浮宮 ➔ 瑪黑區小吃</h4>
-                                <p class="text-xs text-[#6E6256] leading-relaxed">
-                                    • <strong>逛景點：</strong>參觀 <strong>羅浮宮三寶</strong>。<br>
-                                    • <strong>旁邊必吃：</strong>散步至瑪黑區吃 L'As du Fallafel 猶太口袋餅。
-                                </p>
-                            </div>
-                            <div class="bg-white border border-[#E8E0D5] rounded-2xl p-4 shadow-sm">
-                                <h4 class="font-serif-tc font-bold text-sm text-[#3E362E] mb-2">2. 左岸漫步 ➔ 花神咖啡館</h4>
-                                <p class="text-xs text-[#6E6256] leading-relaxed">
-                                    • <strong>休息日必去：</strong>坐在 <strong>Cafe de Flore</strong> 喝杯熱可可，享受不趕路的時光。
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tab 3: 待預訂票券 (擴充 TGV) -->
-        <div id="tab-pending-bookings" class="tab-content hidden">
-            <div class="bg-white border border-[#E8E0D5] rounded-3xl p-6 md:p-8 shadow-sm">
-                <h2 class="text-2xl font-serif-tc font-bold text-[#3E362E] mb-8 pb-4 border-b border-[#F4EFE6] flex items-center gap-2">
-                    <i class="fa-solid fa-ticket-simple text-[#A68A64]"></i> 29天待預訂票券清單 (擴充法國段)
-                </h2>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <!-- 法國 TGV -->
-                    <div class="booking-card bg-[#FDFBF7] border border-[#E8E0D5] rounded-2xl p-5" data-id="flight-international">
-                        <h4 class="font-bold text-sm text-[#3E362E]">🇫🇷 必搶：法國 SNCF 高鐵早鳥票 (共3段)</h4>
-                        <p class="text-xs text-gray-400 mt-1">巴塞➔亞維儂 / 亞維儂➔里昂 / 里昂➔巴黎</p>
-                        <div class="mt-4 text-xs text-[#6E6256]">⏱️ <strong class="text-rose-600">開賣即搶：出發前 3-4 個月</strong>，越晚買越像天價！</div>
+            <!-- Iberia Content -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <!-- Left: Itinerary Timeline -->
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <h2 class="text-2xl font-bold text-[#3E362E]">西葡每日行程總覽</h2>
+                        <div class="h-[1px] flex-1 bg-[#E8E0D5]"></div>
                     </div>
                     
-                    <!-- 兩大魔王 -->
-                    <div class="booking-card bg-[#FDFBF7] border border-[#E8E0D5] rounded-2xl p-5" data-id="flight-international">
-                        <h4 class="font-bold text-sm text-[#3E362E]">🏰 必搶：迪士尼 & 聖米歇爾山大巴</h4>
-                        <p class="text-xs text-gray-400 mt-1">請上 Klook / KKday 預訂</p>
-                        <div class="mt-4 text-xs text-[#6E6256]">⏱️ <strong class="text-[#3E362E]">提前 1 個月預訂即可</strong>，確認日期 (9/23、9/25) 買定離手。</div>
+                    <div class="relative pl-6 timeline-line space-y-10">
+                        <!-- Iberia Day 1 & 2 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white shadow-sm"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#A68A64] text-white px-2.5 py-1 rounded-full font-bold shadow-sm">9/1 (二) - 9/2 (三) | 飛行與抵達</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">啟程前往大航海時代的起點 ✈️</h3>
+                                <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-sm text-[#6E6256] space-y-2 border border-[#E8E0D5]">
+                                    <p>搭乘阿聯酋航空，於杜拜轉機。班機於 9/2 中午 12:35 抵達【葡萄牙里斯本】。</p>
+                                    <p class="text-[#A68A64] font-medium mt-2">📍 下午：飯店 Check-in ➔ 商業廣場 ➔ 奧古斯塔街凱旋門散步調時差。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 3 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/3 (四) | 葡萄牙里斯本</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">阿爾法瑪老城區與葡式蛋塔發源地 🍮</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">🕙 早上：</span>搭乘經典 28 號黃色電車，穿梭阿爾法瑪區 (Alfama)，前往聖若熱城堡俯瞰紅屋頂。</li>
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">🕒 下午：</span>前往貝倫區 (Belém)。參觀熱羅尼莫斯修道院、貝倫塔。</li>
+                                        <li class="flex items-start gap-2"><span class="text-red-500">🍽️ 必吃：</span>朝聖 1837 年開業的 Pastéis de Belém 創始店，剛出爐的蛋塔灑上肉桂粉。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 4 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/4 (五) | 葡萄牙辛特拉</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">童話與魔幻小鎮：辛特拉一日遊 🏰</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p class="mb-2">從里斯本 Rossio 車站搭火車約 40 分鐘抵達。建議購買辛特拉交通一日券。</p>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-3">
+                                        <div class="bg-[#FDFBF7] p-3 rounded-lg border border-[#E8E0D5]">
+                                            <p class="font-bold text-[#3E362E] mb-1">A 路線：夢幻童話風</p>
+                                            <p class="text-xs">佩納宮 (彩色城堡) ➔ 摩爾人城堡 ➔ 羅卡角 (歐亞大陸最西端夕陽)</p>
+                                        </div>
+                                        <div class="bg-[#FDFBF7] p-3 rounded-lg border border-[#E8E0D5]">
+                                            <p class="font-bold text-[#3E362E] mb-1">B 路線：神祕探險風 (推薦)</p>
+                                            <p class="text-xs">雷加萊拉莊園 (倒立天井) ➔ 辛特拉宮 ➔ 羅卡角夕陽</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 5 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#A68A64] text-white px-2.5 py-1 rounded-full font-bold shadow-sm">9/5 (六) | 跨國移動</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">飛往安達魯西亞的靈魂：【西班牙塞維亞】 💃</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p class="font-medium text-[#A68A64] mb-2">✈️ 班機：TP1078 (13:30 里斯本 ➔ 15:45 塞維亞)</p>
+                                    <p>抵達安達魯西亞首府。傍晚在老城區的石板小巷漫步，晚餐體驗正宗的 Tapas 小酒館文化，喝杯 Sangria 水果酒。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 6 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/6 (日) | 西班牙塞維亞</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">絕美西班牙廣場與佛朗明哥之夜 🌟</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">🕙 早上：</span>趁光線最美、人最少時前往【西班牙廣場】，盡情拍攝絕美拱廊與護城河大片。</li>
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">🕒 下午：</span>參觀瑪麗亞路易莎公園，接著登上【都市天傘】(Metropol Parasol) 欣賞巨型木造建築的夕陽。</li>
+                                        <li class="flex items-start gap-2"><span class="text-red-500">🌙 晚上：</span>預訂 Casa de la Memoria 觀賞最震撼心靈的佛朗明哥舞表演。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 7 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/7 (一) | 西班牙塞維亞</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">皇家王宮與世界第三大教堂登頂 👑</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p>今日進行深度歷史洗禮：參觀《權力遊戲》多恩流水花園拍攝地【塞維亞皇家王宮】(需預約)，充滿摩爾人細緻的幾何雕刻。下午參觀【塞維亞大教堂】(哥倫布長眠地) 並登上吉拉達鐘塔，俯瞰橘子花香瀰漫的全城。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 8 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/8 (二) | 放射線當日往返</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">高鐵直達：格拉納達阿爾罕布拉宮 🕌</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p class="font-medium text-[#A68A64] mb-2">🚄 交通：搭乘 Renfe 高鐵往返 (車程約 2.5 小時/單程)，免搬行李！</p>
+                                    <p>全日奉獻給伊斯蘭建築的巔峰之作【阿爾罕布拉宮】(Alhambra)。漫步納斯里德宮殿與軒內洛非花園，感受水與光影的極致魔術。傍晚搭高鐵返回塞維亞。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 9 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#A68A64] text-white px-2.5 py-1 rounded-full font-bold shadow-sm">9/9 (三) | 跨城移動</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">搭乘 AVE 高鐵前往首都【西班牙馬德里】 🏛️</h3>
+                                <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-sm text-[#6E6256] space-y-2 border border-[#E8E0D5]">
+                                    <p class="font-medium text-[#A68A64]">🚄 交通：塞維亞 11:42 ➔ 馬德里 14:38 (約 2.5 小時)</p>
+                                    <p>抵達馬德里 Atocha 車站。下午直奔【聖米格爾市場】(Mercado de San Miguel) 大啖生蠔與小吃，傍晚在馬約爾廣場及太陽門廣場與「熊與莓樹」雕像合影。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 10 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/10 (四) | 西班牙馬德里</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">奢華皇宮與近郊迪士尼城堡 (塞哥維亞) 🏰</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">上午：</span>搭高鐵 (30分鐘) 前往近郊小鎮塞哥維亞 (Segovia)。震撼仰望古羅馬水道橋，參觀白雪公主城堡原型「阿爾卡薩爾城堡」。</li>
+                                        <li class="flex items-start gap-2"><span class="text-red-500">午餐：</span>朝聖百年老店 Mesón de Cándido 品嚐招牌烤乳豬。</li>
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">下午：</span>返回馬德里，參觀極致奢華的【馬德里皇宮】。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 11 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#A68A64] text-white px-2.5 py-1 rounded-full font-bold shadow-sm">9/11 (五) | 跨城移動</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">高第的魔幻之都【西班牙巴塞隆納】 🌊</h3>
+                                <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-sm text-[#6E6256] space-y-2 border border-[#E8E0D5]">
+                                    <p class="font-medium text-[#A68A64]">🚄 交通：馬德里 10:30 ➔ 巴塞隆納 13:15 (搭乘 Ouigo 或 Renfe 高鐵)</p>
+                                    <p>抵達加泰隆尼亞首府。下午前往巴塞隆內塔海灘 (Barceloneta) 散步吹海風，晚上在哥德區穿梭中世紀巷弄，找間 Tapas 酒吧開啟巴塞隆納的第一夜。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 12 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/12 (六) | 西班牙巴塞隆納</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">高第建築巡禮：聖家堂與奎爾公園 ✨</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p>早起朝聖人類建築奇蹟【聖家堂】(需提早2個月買票)，陽光穿透彩繪玻璃的瞬間會感動到想哭。下午前往【奎爾公園】，坐在馬賽克波浪長椅上俯瞰整個巴塞隆納市區與地中海。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 13 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/13 (日) | 西班牙巴塞隆納</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">蒙特塞拉特聖山靈性一日遊 ⛰️</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p>從市區搭乘火車轉乘齒軌纜車，前往高第聖家堂的靈感發源地。參觀鑲嵌在鋸齒山壁中的修道院，朝聖黑聖母，並聆聽歐洲最古老的男童合唱團天籟之音。走到聖米格爾十字架觀景台拍下絕美大景。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 14 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/14 (一) | 西班牙巴塞隆納</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">格拉西亞大道血拼與巴特婁之家 🛍️</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p>西葡的最後血拼日！漫步在精品林立的格拉西亞大道，順道欣賞高第的【巴特婁之家】(海洋主題) 與【米拉之家】(波浪外觀)。晚上安排一頓豐盛的海鮮燉飯告別晚宴 (如 7 Portes)。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Iberia Day 15 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#A68A64] text-white px-2.5 py-1 rounded-full font-bold shadow-sm">9/15 (二) | 西葡旅程分離點</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">【西葡篇終章】各自啟程 ✈️🚄</h3>
+                                <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-sm text-[#6E6256] space-y-2 border border-[#E8E0D5]">
+                                    <p>早上在咖啡廳享受最後的西葡慢活時光。中午前往巴塞隆納機場，閨蜜搭機返台。</p>
+                                    <p class="font-bold text-[#3E362E] border-t border-[#E8E0D5] pt-2 mt-2">👉 妳的法國獨旅正式展開！下午前往 Sants 車站搭高鐵往南法亞維儂。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Information Box (Sticky) -->
+                <div class="lg:col-span-1">
+                    <div class="sticky top-24 space-y-6">
+                        <!-- AI Assistant Card -->
+                        <div class="bg-white rounded-2xl p-6 border border-[#E8E0D5] shadow-sm">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-[#F0ECE1] flex items-center justify-center text-xl">🤖</div>
+                                <div>
+                                    <h3 class="font-bold text-[#3E362E]">AI 隨行行前顧問 (西葡版)</h3>
+                                    <p class="text-xs text-gray-500">24/7 為您解答行程細節</p>
+                                </div>
+                            </div>
+                            <div class="space-y-2 mb-4">
+                                <button class="w-full text-left px-4 py-2 bg-[#FDFBF7] hover:bg-[#F0ECE1] rounded-lg text-sm transition-colors border border-[#E8E0D5]">💡 葡萄牙到西班牙如何搭飛機最順？</button>
+                                <button class="w-full text-left px-4 py-2 bg-[#FDFBF7] hover:bg-[#F0ECE1] rounded-lg text-sm transition-colors border border-[#E8E0D5]">💡 聖家堂門票何時開賣？</button>
+                            </div>
+                            <p class="text-xs text-gray-400 text-center">本顧問模組已更新至 2026 最新資訊</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Tab 4: 跨國交通比價 -->
-        <div id="tab-transport-spec" class="tab-content hidden">
-            <div class="bg-white border border-[#E8E0D5] rounded-3xl p-6 md:p-8 shadow-sm">
-                <h2 class="text-2xl font-serif-tc font-bold text-[#3E362E] mb-6 pb-4 border-b border-[#F4EFE6] flex items-center gap-2">
-                    <i class="fa-solid fa-calculator text-[#A68A64]"></i>
-                    <span>歐洲 29 天跨國移動明細計費 (極致小資精算版)</span>
-                </h2>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left border-collapse">
-                        <thead>
-                            <tr class="border-b border-[#E8E0D5] text-[#A68A64]">
-                                <th class="py-3 px-4">移動路段</th>
-                                <th class="py-3 px-4">工具車次</th>
-                                <th class="py-3 px-4">雙人總合 (台幣)</th>
-                                <th class="py-3 px-4">精算評估</th>
-                            </tr>
-                        </thead>
-                        <tbody class="text-[#6E6256] divide-y divide-[#F4EFE6]">
-                            <tr>
-                                <td class="py-4 px-4 font-bold text-[#3E362E]">🇪🇸 馬德里 ➔ 巴塞隆納</td>
-                                <td class="py-4 px-4 text-xs">Ave 03093 (高鐵)</td>
-                                <td class="py-4 px-4 font-bold">NT$ 1,386</td>
-                                <td class="py-4 px-4 text-xs">不買 Pass 單買最省。</td>
-                            </tr>
-                            <tr>
-                                <td class="py-4 px-4 font-bold text-[#3E362E]">🇫🇷 巴塞隆納 ➔ 亞維儂</td>
-                                <td class="py-4 px-4 text-xs">SNCF TGV 跨國高鐵</td>
-                                <td class="py-4 px-4 font-bold">約 NT$ 2,500</td>
-                                <td class="py-4 px-4 text-xs">9/15 早鳥優惠，激省 1000 元！</td>
-                            </tr>
-                            <tr>
-                                <td class="py-4 px-4 font-bold text-[#3E362E]">🇫🇷 亞維儂 ➔ 里昂</td>
-                                <td class="py-4 px-4 text-xs">SNCF TGV 國內線</td>
-                                <td class="py-4 px-4 font-bold">約 NT$ 1,200</td>
-                                <td class="py-4 px-4 text-xs">車程僅 1 小時 4 分，超級快。</td>
-                            </tr>
-                            <tr>
-                                <td class="py-4 px-4 font-bold text-[#3E362E]">🇫🇷 里昂 ➔ 巴黎</td>
-                                <td class="py-4 px-4 text-xs">SNCF TGV 國內線</td>
-                                <td class="py-4 px-4 font-bold">約 NT$ 1,800</td>
-                                <td class="py-4 px-4 text-xs">準時去巴黎跟新朋友會合。</td>
-                            </tr>
-                        </tbody>
-                    </table>
+        <!-- TAB 2: 法國行程 (全新 9/15-9/29) -->
+        <div id="tab-france" class="tab-content hidden">
+            <!-- Hero Section for France -->
+            <div class="relative w-full h-[400px] rounded-3xl overflow-hidden mb-12 shadow-xl">
+                <img src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1600&auto=format&fit=crop" 
+                     alt="巴黎鐵塔與塞納河" 
+                     referrerpolicy="no-referrer"
+                     class="absolute inset-0 w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div class="absolute bottom-8 left-8 right-8">
+                    <span class="bg-[#A68A64] text-white px-3 py-1 rounded-full text-xs font-bold tracking-wider mb-3 inline-block shadow-lg">PART 2 : VOYAGE EN FRANCE</span>
+                    <h1 class="text-4xl sm:text-5xl font-bold text-white mb-2 leading-tight drop-shadow-md">南法微醺與巴黎夢境</h1>
+                    <p class="text-white/90 text-lg flex items-center gap-2 drop-shadow">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        2026.09.15 - 09.29 (15 天)
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                <div class="lg:col-span-2 space-y-8">
+                    <div class="flex items-center gap-3 mb-6">
+                        <h2 class="text-2xl font-bold text-[#3E362E]">法國每日行程總覽 (極致展開版)</h2>
+                        <div class="h-[1px] flex-1 bg-[#E8E0D5]"></div>
+                    </div>
+                    
+                    <div class="relative pl-6 timeline-line space-y-10">
+                        <!-- France Day 1 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white shadow-sm"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#A68A64] text-white px-2.5 py-1 rounded-full font-bold shadow-sm">9/15 (二) | 法國 DAY 1</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">獨旅啟程 ➔ 衝南法普羅旺斯 🚄</h3>
+                                <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-sm text-[#6E6256] space-y-2 border border-[#E8E0D5]">
+                                    <p class="font-medium text-[#A68A64]">🕒 交通：16:31 巴塞隆納出發 ➔ 20:52 抵達南法亞維儂 (Avignon TGV)</p>
+                                    <p>中午送朋友去巴塞隆納機場後，正式開啟法國獨旅！搭乘跨國高鐵前往普羅旺斯的心臟「亞維儂」。</p>
+                                    <p class="text-red-500 font-bold">⚠️ 安全提醒：抵達 Avignon TGV 後，立刻轉乘 5 分鐘市區接駁火車進入城牆內的 Avignon Centre 車站，步行進飯店。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 2 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/16 (三) | 法國 DAY 2</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">亞維儂歷史古蹟巡禮 🏰</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">上午：</span>參觀世界遺產、磅礡的【教皇宮】(Palais des Papes)，感受中世紀教廷的權力中心。</li>
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">下午：</span>漫步著名的【聖貝內澤斷橋】(Pont Saint-Bénézet)，在隆河畔吹風。</li>
+                                        <li class="flex items-start gap-2"><span class="text-red-500">午餐推薦：</span>找間平價法式小酒館 (Bistrot)，點一套午間套餐 (Formule)，約 15-20 歐元即可享受道地美味。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 3 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/17 (四) | 法國 DAY 3</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">普羅旺斯最美山城一日遊 ⛰️</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p>在 Avignon Centre 巴士站搭乘 Zou! 區域巴士，悠閒遊覽：</p>
+                                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                                        <li><strong>Gordes (天空之城/石頭城)：</strong> 依山而建的白色巨石小鎮，電影《美好的一年》拍攝地。</li>
+                                        <li><strong>Roussillon (紅土城)：</strong> 充滿魔幻色彩的紅色小鎮，漫步紅土小徑，拍出極具南法風情的照片。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 4 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/18 (五) | 法國 DAY 4</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">梵谷足跡與南法特色市集 🌻</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p>搭乘巴士前往 Saint-Rémy-de-Provence。探訪聖保羅精神病院 (梵谷曾居住作畫的地方，名作《星夜》誕生於此)。中午逛逛溫馨的南法藝術特色市集，買些手工香皂與薰衣草香包。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 5 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/19 (六) | 法國 DAY 5</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">亞維儂慢活放空 ➔ 體力蓄電 ☕</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p>經過連續幾天的山城奔波，今日留在亞維儂城內休息。在共和國大街的露天咖啡廳喝拿鐵、寫明信片，享受真正的南法度假節奏，把體力充到 100%，準備迎接大城市！</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 6 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#A68A64] text-white px-2.5 py-1 rounded-full font-bold shadow-sm">9/20 (日) | 法國 DAY 6</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">移動到美食之都里昂 ➔ 聖母院夕陽 🚄</h3>
+                                <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-sm text-[#6E6256] space-y-2 border border-[#E8E0D5]">
+                                    <p class="font-medium text-[#A68A64]">🕒 交通：搭乘 TGV (車程僅 1 小時 4 分鐘) 抵達里昂</p>
+                                    <p>飯店 Check-in 後，下午搭乘復古的路面纜車 (Funiculaire) 登上【富維耶聖母院】(Basilique Notre-Dame de Fourvière)。站在觀景台上，俯瞰里昂老城區一整片紅色屋頂與兩河交匯的唯美日落。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 7 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/21 (一) | 法國 DAY 7</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">里昂舊城探索 ➔ 傳統紅酒館晚宴 🍷</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">白天：</span>整天慢逛里昂舊城區 (Vieux Lyon)，尋找隱藏在建築物中的神祕歷史秘密通道 (Traboules)，這是過去絲綢工人運貨的密道。</li>
+                                        <li class="flex items-start gap-2"><span class="text-red-500">晚餐重頭戲：</span>今晚朝聖里昂獨有的傳統紅酒館【Bouchon】！品嚐正宗油封鴨腿、里昂魚肉泥丸 (Quenelle)，搭配一壺薄酒萊產區紅酒。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 8 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#A68A64] text-white px-2.5 py-1 rounded-full font-bold shadow-sm">9/22 (二) | 法國 DAY 8</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">高鐵衝巴黎 ➔ 閨蜜雙人會合與鐵塔點燈 ✨</h3>
+                                <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-sm text-[#6E6256] space-y-2 border border-[#E8E0D5]">
+                                    <p class="font-medium text-[#A68A64]">🕒 交通：中午搭乘 TGV (約 2 小時) 直達巴黎</p>
+                                    <p>前往巴黎飯店，與剛從台灣飛來、熱騰騰降落的新旅伴會合！這天不排硬行程，傍晚一起漫步到塞納河畔，看艾菲爾鐵塔每小時一次的閃爍點燈秀，吃頓輕鬆晚餐早點休息。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 9 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/23 (三) | 法國 DAY 9</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">【時差友善日】瑪黑區文青散策與杜樂麗花園 ☕</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">核心精神：</span>不排大行程，讓剛到的朋友調時差。睡到自然醒！</li>
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">下午：</span>直奔充滿設計師小店與香氛品牌的【瑪黑區】(Le Marais)。逛累了買杯咖啡，坐在孚日廣場 (Place des Vosges) 的草地旁聊天。</li>
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">傍晚：</span>漫步到羅浮宮前的【杜樂麗花園】，找兩張經典的綠色鐵椅，坐在噴泉旁曬夕陽放空。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 10 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-rose-500 border-4 border-white shadow-sm"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-rose-50 text-rose-600 px-2.5 py-1 rounded-full font-bold border border-rose-200">9/24 (四) | 法國 DAY 10</span>
+                                <h3 class="text-lg font-bold text-rose-700 mt-2">大魔王 1：巴黎迪士尼樂園黃金一日遊！ 🏰</h3>
+                                <div class="bg-rose-50/50 p-4 rounded-xl mt-3 text-sm text-gray-700 space-y-2 border border-rose-100">
+                                    <p class="font-bold text-rose-600 mb-2">✨ 為什麼選這天？因為週四是週間人潮最少的一天！</p>
+                                    <p>朋友時差調好，電力滿格！搭乘 RER A 線直達樂園。進園狂拍粉紅色的睡美人城堡，買好買滿限定髮箍與周邊。</p>
+                                    <p class="text-rose-700 font-medium">🎇 重頭戲：無論再累，一定要撐到晚上閉園前，欣賞全世界最震撼的無人機煙火城堡秀 (Disney Illuminations) 再回市區！</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 11 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/25 (五) | 法國 DAY 11</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">【體力修復日】羅浮宮三寶與平價藥妝大採買 🛍️</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">下午：</span>昨天迪士尼太累，今天必須睡飽！預約下午時段進入【羅浮宮】，朝聖蒙娜麗莎、勝利女神與維納斯三寶。</li>
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">傍晚：</span>前往聖日耳曼區，朝聖雙叟或花神咖啡館。接著直奔【Citypharma 平價藥妝店】大肆掃貨理膚寶水與貝德瑪，買完直接回飯店放戰利品！</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 12 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/26 (六) | 法國 DAY 12</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">週末死守市區 1 ➔ 聖圖安跳蚤市場與蒙馬特高地 🎨</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <p class="font-bold text-[#3E362E] mb-2">💡 週末原則：不去熱門近郊人擠人，體驗巴黎市區日常。</p>
+                                    <p>早上前往世界最大的【聖圖安跳蚤市場】(Marché aux Puces) 淘寶古董飾品。下午前往愛蜜莉的異想世界取景地【蒙馬特高地】，逛小丘廣場畫家村，買個可麗餅，坐在【聖心堂】階梯上聽街頭藝人彈唱，看巴黎最美夕陽。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 13 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#607254] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#F0ECE1] text-[#607254] px-2.5 py-1 rounded-full font-bold border border-[#D9D2C2]">9/27 (日) | 法國 DAY 13</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">週末死守市區 2 ➔ 巴士底市集與塞納河遊船 🦪</h3>
+                                <div class="bg-white p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-[#E8E0D5] shadow-sm">
+                                    <ul class="space-y-3">
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">上午：</span>直奔每週四、日才營業的【巴士底市集】(Marché Bastille)，像當地人一樣站著吃新鮮平價的生蠔配白酒！</li>
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">下午：</span>漫步香榭麗舍大道，登頂【凱旋門】俯瞰星形街道。</li>
+                                        <li class="flex items-start gap-2"><span class="text-[#A68A64]">晚上：</span>安排一趟【塞納河遊船】(Bateaux Parisiens)，在波光粼粼中享受巴黎夜景。</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 14 (With Backup Plan) -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-amber-500 border-4 border-white shadow-sm"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full font-bold border border-amber-200">9/28 (一) | 法國 DAY 14</span>
+                                <h3 class="text-lg font-bold text-amber-700 mt-2">大魔王 2 或是極致奢華？(視體力二選一) 👑</h3>
+                                <div class="bg-amber-50/30 p-4 rounded-xl mt-3 text-sm text-[#6E6256] border border-amber-200 shadow-sm space-y-4">
+                                    <div class="border-b border-amber-200 pb-3">
+                                        <p class="font-bold text-amber-700 text-base mb-1">🏰 方案 A (體力充足)：夢幻聖米歇爾山一日遊</p>
+                                        <p>週一避開週末出遊潮！報名 Klook/KKday 巴黎出發的大巴團。雖然來回車程長達 8 小時，但在車上可以狂睡。抵達後欣賞宛如《魔戒》般的絕美海上修道院，此生必看。</p>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-rose-600 text-base mb-1">💎 方案 B (體力見底備案)：歌劇院區極致奢華血拼日</p>
+                                        <p>不想早起拉車的完美備案！早上睡飽，參觀金碧輝煌的【巴黎歌劇院】(Palais Garnier)。下午直奔旁邊的【拉法葉百貨】與春天百貨進行最後的精品掃貨。晚上訂一間道地的法式米其林餐廳犒賞自己，吃飽回飯店輕鬆塞行李填退稅單！</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- France Day 15 -->
+                        <div class="relative flex flex-col gap-2 items-start itinerary-card">
+                            <div class="absolute -left-[25px] top-1.5 w-4 h-4 rounded-full bg-[#A68A64] border-4 border-white"></div>
+                            <div class="flex-1 w-full">
+                                <span class="text-xs bg-[#A68A64] text-white px-2.5 py-1 rounded-full font-bold shadow-sm">9/29 (二) | 法國終章</span>
+                                <h3 class="text-lg font-bold text-[#3E362E] mt-2">優雅賦歸 ➔ 機場辦退稅 ✈️</h3>
+                                <div class="bg-[#FDFBF7] p-4 rounded-xl mt-3 text-sm text-[#6E6256] space-y-2 border border-[#E8E0D5]">
+                                    <p>早上在飯店吃個可頌、喝杯歐蕾。中午帶著完美的戰利品，搭乘 RER B 線或叫車前往戴高樂機場 (CDG)。</p>
+                                    <p class="font-medium text-[#A68A64]">⚠️ 務必提前 3-4 小時抵達機場，使用自助退稅機 (PABLO) 掃描退稅單，優雅登機回台！</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Information Box (France) -->
+                <div class="lg:col-span-1">
+                    <div class="sticky top-24 space-y-6">
+                        <div class="bg-white rounded-2xl p-6 border border-[#E8E0D5] shadow-sm">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 rounded-full bg-[#F0ECE1] flex items-center justify-center text-xl">🥐</div>
+                                <div>
+                                    <h3 class="font-bold text-[#3E362E]">法國移動交通解析</h3>
+                                    <p class="text-xs text-gray-500">TGV 與地鐵指南</p>
+                                </div>
+                            </div>
+                            <ul class="text-sm text-[#6E6256] space-y-3">
+                                <li class="border-b border-[#E8E0D5] pb-2">
+                                    <span class="font-bold text-[#3E362E]">跨國高鐵 (巴塞隆納 ➔ 亞維儂)</span><br>
+                                    Renfe-SNCF 合作營運，務必提前 2 個月購買早鳥票。
+                                </li>
+                                <li class="border-b border-[#E8E0D5] pb-2">
+                                    <span class="font-bold text-[#3E362E]">巴黎市區交通 (Navigo)</span><br>
+                                    強烈建議手機下載 Bonjour RATP App，綁定 Apple Pay 購買 Navigo 週票或 10 次券 (Carnet)。
+                                </li>
+                                <li>
+                                    <span class="font-bold text-[#3E362E]">迪士尼交通 (RER A)</span><br>
+                                    需購買跨區單程票 (Billet Origine-Destination)，市區 t+ 票不能用！
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: 待預訂票券 -->
+        <div id="tab-tickets" class="tab-content hidden">
+            <h2 class="text-2xl font-bold text-[#3E362E] mb-6">🎟️ 30 日全行程待預訂票券儀表板</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Iberia Tickets -->
+                <div class="bg-white rounded-2xl p-6 border border-[#E8E0D5] shadow-sm">
+                    <h3 class="font-bold text-[#A68A64] mb-4 text-lg border-b border-[#E8E0D5] pb-2">🇪🇸 🇵🇹 西葡段票券 (9/1-9/15)</h3>
+                    <ul class="space-y-4" id="iberia-tickets-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+
+                <!-- France Tickets -->
+                <div class="bg-white rounded-2xl p-6 border border-[#E8E0D5] shadow-sm">
+                    <h3 class="font-bold text-[#A68A64] mb-4 text-lg border-b border-[#E8E0D5] pb-2">🇫🇷 法國段票券 (9/15-9/29)</h3>
+                    <ul class="space-y-4" id="france-tickets-list">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: 地圖與美食 -->
+        <div id="tab-map" class="tab-content hidden h-[80vh]">
+            <div class="h-full bg-white rounded-3xl overflow-hidden border border-[#E8E0D5] shadow-sm relative flex flex-col">
+                <div class="p-4 bg-[#FDFBF7] border-b border-[#E8E0D5] flex gap-2 overflow-x-auto">
+                    <button onclick="flyToCity('lisbon')" class="px-4 py-2 bg-white rounded-full text-sm font-medium border border-[#E8E0D5] hover:border-[#A68A64] transition-colors">🇵🇹 里斯本</button>
+                    <button onclick="flyToCity('seville')" class="px-4 py-2 bg-white rounded-full text-sm font-medium border border-[#E8E0D5] hover:border-[#A68A64] transition-colors">🇪🇸 塞維亞</button>
+                    <button onclick="flyToCity('madrid')" class="px-4 py-2 bg-white rounded-full text-sm font-medium border border-[#E8E0D5] hover:border-[#A68A64] transition-colors">🇪🇸 馬德里</button>
+                    <button onclick="flyToCity('barcelona')" class="px-4 py-2 bg-white rounded-full text-sm font-medium border border-[#E8E0D5] hover:border-[#A68A64] transition-colors">🇪🇸 巴塞隆納</button>
+                    <button onclick="flyToCity('avignon')" class="px-4 py-2 bg-white rounded-full text-sm font-medium border border-[#E8E0D5] hover:border-[#A68A64] transition-colors">🇫🇷 亞維儂</button>
+                    <button onclick="flyToCity('lyon')" class="px-4 py-2 bg-white rounded-full text-sm font-medium border border-[#E8E0D5] hover:border-[#A68A64] transition-colors">🇫🇷 里昂</button>
+                    <button onclick="flyToCity('paris')" class="px-4 py-2 bg-white rounded-full text-sm font-medium border border-[#E8E0D5] hover:border-[#A68A64] transition-colors">🇫🇷 巴黎</button>
+                </div>
+                <div id="map" class="flex-1 w-full"></div>
+                <!-- Legend -->
+                <div class="absolute bottom-6 left-6 z-[1000] bg-white/90 p-3 rounded-xl shadow-lg border border-[#E8E0D5] text-xs">
+                    <div class="flex items-center gap-2 mb-2"><span class="custom-pin-gold"></span> 必訪景點</div>
+                    <div class="flex items-center gap-2"><span class="custom-pin-green"></span> 老饕必吃美食</div>
                 </div>
             </div>
         </div>
@@ -610,91 +642,151 @@
     </main>
 
     <script>
-        // Tab 切換與 Leaflet 修正
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('tab-' + tabName).classList.remove('hidden');
-            document.getElementById('btn-' + tabName).classList.add('active');
+        // --- 1. Tab Switching Logic ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId).classList.remove('hidden');
+            
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active', 'border-bottom');
+                el.style.borderBottom = 'none';
+            });
+            const activeBtn = document.getElementById('btn-' + tabId);
+            activeBtn.classList.add('active');
+            activeBtn.style.borderBottom = '3px solid #A68A64';
 
-            if (tabName === 'map-infographic') {
-                setTimeout(() => {
-                    if (map) { map.invalidateSize(); selectMapCity(currentCity); }
-                }, 200);
+            // Refresh map size if map tab is clicked
+            if (tabId === 'tab-map' && map) {
+                setTimeout(() => map.invalidateSize(), 100);
             }
         }
 
-        let map, markersLayer, connectionsLayer;
-        let currentCity = 'avignon';
+        // --- 2. Tickets Logic ---
+        const iberiaTickets = [
+            { id: 't1', name: '阿聯酋機票 (台-里斯本/巴塞-台)', time: '出發前 6-8 個月', price: '~NT$ 40,000' },
+            { id: 't2', name: '【里斯本】熱羅尼莫斯修道院門票', time: '出發前 1 個月', price: '€12' },
+            { id: 't3', name: '【辛特拉】佩納宮 & 莊園門票', time: '出發前 1 個月', price: '€25' },
+            { id: 't4', name: '里斯本 ➔ 塞維亞 (單程機票 TP)', time: '出發前 3 個月', price: '€50-80' },
+            { id: 't5', name: '【塞維亞】大教堂登頂 & 皇家王宮', time: '出發前 1-2 個月', price: '€30' },
+            { id: 't6', name: '【塞維亞】佛朗明哥秀前排票', time: '出發前 1 個月', price: '€22' },
+            { id: 't7', name: '【格拉納達】阿爾罕布拉宮 (極難搶)', time: '出發前 3 個月 (必搶)', price: '€19' },
+            { id: 't8', name: '塞維亞 ➔ 馬德里 (AVE 高鐵)', time: '出發前 2-3 個月', price: '€40' },
+            { id: 't9', name: '【巴塞隆納】聖家堂門票', time: '出發前 2 個月', price: '€34' },
+            { id: 't10', name: '【巴塞隆納】蒙特塞拉特聖山齒軌套票', time: '出發前 1 個月', price: '€45' }
+        ];
 
-        // 擴充法國三城的精確座標
-        const cityMapData = {
-            lisbon: { center: [38.7110, -9.1450], zoom: 13, points: [], connections: [] },
-            seville: { center: [37.3840, -5.9900], zoom: 14, points: [], connections: [] },
-            barcelona: { center: [41.3830, 2.1740], zoom: 13, points: [], connections: [] },
-            avignon: {
-                center: [43.9493, 4.8055], zoom: 14,
-                points: [
-                    { type: 'spot', name: '⛪ 1. 教皇宮', coords: [43.9508, 4.8075], desc: '氣勢磅礡的中古世紀大宮殿。' },
-                    { type: 'food', name: '🍷 旁邊必吃：法式平價小酒館', coords: [43.9490, 4.8060], desc: '午間套餐只要 15 歐。' }
-                ],
-                connections: [ [[43.9508, 4.8075], [43.9490, 4.8060]] ]
-            },
-            lyon: {
-                center: [45.7640, 4.8357], zoom: 14,
-                points: [
-                    { type: 'spot', name: '⛪ 1. 里昂舊城區', coords: [45.7621, 4.8276], desc: '探索文藝復興秘密通道。' },
-                    { type: 'food', name: '🍷 旁邊必吃：傳統 Bouchon', coords: [45.7630, 4.8280], desc: '吃最道地的油封鴨。' }
-                ],
-                connections: [ [[45.7621, 4.8276], [45.7630, 4.8280]] ]
-            },
-            paris: {
-                center: [48.8566, 2.3522], zoom: 13,
-                points: [
-                    { type: 'spot', name: '🖼️ 1. 羅浮宮', coords: [48.8606, 2.3376], desc: '朝聖蒙娜麗莎。' },
-                    { type: 'food', name: '🥙 瑪黑區：口袋餅', coords: [48.8574, 2.3589], desc: '大排長龍的猶太小吃。' },
-                    { type: 'spot', name: '☕ 2. 花神咖啡館', coords: [48.8541, 2.3326], desc: '左岸放空最佳首選。' }
-                ],
-                connections: [ [[48.8606, 2.3376], [48.8574, 2.3589]] ]
-            }
-        };
+        const franceTickets = [
+            { id: 'f1', name: '巴塞隆納 ➔ 亞維儂 (跨國 TGV)', time: '出發前 3-4 個月 (早鳥必搶)', price: '€39-59' },
+            { id: 'f2', name: '【亞維儂】教皇宮門票', time: '出發前 2 週', price: '€12' },
+            { id: 'f3', name: '亞維儂 ➔ 里昂 (TGV 高鐵)', time: '出發前 2 個月', price: '€25-45' },
+            { id: 'f4', name: '里昂 ➔ 巴黎 (TGV 高鐵)', time: '出發前 2 個月', price: '€35-65' },
+            { id: 'f5', name: '【巴黎】迪士尼樂園 1 日 2 園票', time: '出發前 1-2 個月', price: '€80-105' },
+            { id: 'f6', name: '【巴黎】羅浮宮門票 (指定時段)', time: '出發前 1-2 個月', price: '€22' },
+            { id: 'f7', name: '【巴黎】塞納河遊船船票', time: '出發前 1 週 / 現場', price: '€18' },
+            { id: 'f8', name: '【巴黎】聖米歇爾山大巴一日遊 (備案)', time: '出發前 1 個月', price: '€120-150' }
+        ];
 
-        window.onload = () => {
-            map = L.map('leaflet-map').setView(cityMapData.avignon.center, cityMapData.avignon.zoom);
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { attribution: '&copy; CARTO' }).addTo(map);
-            markersLayer = L.layerGroup().addTo(map);
-            connectionsLayer = L.layerGroup().addTo(map);
-            selectMapCity('avignon');
-        };
-
-        function selectMapCity(cityId) {
-            currentCity = cityId;
-            document.querySelectorAll('.map-city-btn').forEach(btn => {
-                btn.className = 'map-city-btn px-4 py-2 rounded-xl text-xs font-bold border transition bg-white text-[#6E6256] border-[#E8E0D5] hover:bg-[#F4EFE6]';
+        function renderTickets(list, containerId) {
+            const container = document.getElementById(containerId);
+            list.forEach(t => {
+                const savedState = localStorage.getItem(t.id) === 'true';
+                const li = document.createElement('li');
+                li.className = "flex items-center justify-between p-3 bg-[#FDFBF7] rounded-lg border border-[#E8E0D5]";
+                li.innerHTML = `
+                    <div>
+                        <p class="font-bold text-[#3E362E] text-sm">${t.name}</p>
+                        <p class="text-xs text-gray-500 mt-1">黃金期: ${t.time} | 預算: ${t.price}</p>
+                    </div>
+                    <button id="btn-${t.id}" onclick="toggleTicket('${t.id}')" class="px-3 py-1 rounded-full text-xs font-bold transition-colors ${savedState ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'}">
+                        ${savedState ? '🟢 已完成' : '🔴 待預訂'}
+                    </button>
+                `;
+                container.appendChild(li);
             });
-            document.getElementById(`map-btn-${cityId}`).className = 'map-city-btn px-4 py-2 rounded-xl text-xs font-bold border transition bg-[#607254] text-white shadow-sm';
-            
-            document.querySelectorAll('.combined-timeline').forEach(tl => tl.classList.add('hidden'));
-            const activeTimeline = document.getElementById(`combined-timeline-${cityId}`);
-            if (activeTimeline) activeTimeline.classList.remove('hidden');
-
-            const data = cityMapData[cityId];
-            markersLayer.clearLayers();
-            connectionsLayer.clearLayers();
-            
-            data.connections.forEach(conn => {
-                L.polyline(conn, { color: '#A68A64', weight: 2, dashArray: '5, 8' }).addTo(connectionsLayer);
-            });
-
-            data.points.forEach(pt => {
-                const iconEmoji = pt.type === 'spot' ? '🌟' : '🍽️';
-                const iconClass = pt.type === 'spot' ? 'custom-pin-spot' : 'custom-pin-food';
-                const customIcon = L.divIcon({ html: `<div class="${iconClass}">${iconEmoji}</div>`, iconSize: [32, 32], iconAnchor: [16, 16] });
-                L.marker(pt.coords, { icon: customIcon }).bindPopup(`<div class="text-xs"><strong>${pt.name}</strong><br>${pt.desc}</div>`).addTo(markersLayer);
-            });
-
-            map.flyTo(data.center, data.zoom, { animate: true, duration: 1.5 });
         }
+
+        function toggleTicket(id) {
+            const currentState = localStorage.getItem(id) === 'true';
+            const newState = !currentState;
+            localStorage.setItem(id, newState);
+            
+            const btn = document.getElementById(`btn-${id}`);
+            if (newState) {
+                btn.className = "px-3 py-1 rounded-full text-xs font-bold transition-colors bg-green-100 text-green-700";
+                btn.innerHTML = '🟢 已完成';
+            } else {
+                btn.className = "px-3 py-1 rounded-full text-xs font-bold transition-colors bg-red-100 text-red-600";
+                btn.innerHTML = '🔴 待預訂';
+            }
+        }
+
+        renderTickets(iberiaTickets, 'iberia-tickets-list');
+        renderTickets(franceTickets, 'france-tickets-list');
+
+        // --- 3. Leaflet Map Logic ---
+        let map;
+        const locations = {
+            'lisbon': { coords: [38.7223, -9.1393], zoom: 14 },
+            'seville': { coords: [37.3891, -5.9845], zoom: 15 },
+            'madrid': { coords: [40.4168, -3.7038], zoom: 14 },
+            'barcelona': { coords: [41.3851, 2.1734], zoom: 14 },
+            'avignon': { coords: [43.9493, 4.8055], zoom: 15 },
+            'lyon': { coords: [45.7640, 4.8357], zoom: 14 },
+            'paris': { coords: [48.8566, 2.3522], zoom: 13 }
+        };
+
+        const mapPoints = [
+            // Lisbon
+            { type: 'spot', coords: [38.6979, -9.2066], title: '熱羅尼莫斯修道院' },
+            { type: 'food', coords: [38.6975, -9.2032], title: 'Pastéis de Belém (創始蛋塔)' },
+            // Seville
+            { type: 'spot', coords: [37.3772, -5.9869], title: '西班牙廣場 Plaza de España' },
+            { type: 'food', coords: [37.3860, -5.9902], title: 'Bodega Santa Cruz (炸烏賊)' },
+            // Madrid
+            { type: 'spot', coords: [40.4180, -3.7143], title: '馬德里皇宮' },
+            { type: 'food', coords: [40.4167, -3.7075], title: 'San Ginés (百年吉拿棒)' },
+            // Barcelona
+            { type: 'spot', coords: [41.4036, 2.1744], title: '聖家堂 Sagrada Família' },
+            { type: 'food', coords: [41.3888, 2.1670], title: 'Ciudad Condal (蜂蜜鱈魚排隊王)' },
+            // Avignon
+            { type: 'spot', coords: [43.9507, 4.8075], title: '教皇宮 Palais des Papes' },
+            // Lyon
+            { type: 'spot', coords: [45.7623, 4.8225], title: '富維耶聖母院' },
+            { type: 'food', coords: [45.7621, 4.8275], title: '里昂舊城 Bouchon 餐廳街' },
+            // Paris
+            { type: 'spot', coords: [48.8606, 2.3376], title: '羅浮宮 Louvre' },
+            { type: 'spot', coords: [48.8584, 2.2945], title: '艾菲爾鐵塔 Eiffel Tower' },
+            { type: 'food', coords: [48.8530, 2.3323], title: 'Citypharma / 左岸咖啡館區' }
+        ];
+
+        function initMap() {
+            // Use CartoDB Positron for a light, elegant, sandy-beige look
+            map = L.map('map').setView([41.3851, 2.1734], 6);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap contributors &copy; CARTO',
+                maxZoom: 19
+            }).addTo(map);
+
+            // Custom Icons
+            const spotIcon = L.divIcon({ className: 'custom-pin-gold', iconSize: [20, 20], iconAnchor: [10, 10] });
+            const foodIcon = L.divIcon({ className: 'custom-pin-green', iconSize: [16, 16], iconAnchor: [8, 8] });
+
+            mapPoints.forEach(p => {
+                const marker = L.marker(p.coords, { icon: p.type === 'spot' ? spotIcon : foodIcon }).addTo(map);
+                marker.bindPopup(`<div class="font-bold text-[#3E362E]">${p.title}</div>`);
+            });
+        }
+
+        function flyToCity(cityKey) {
+            const dest = locations[cityKey];
+            if (dest && map) {
+                map.flyTo(dest.coords, dest.zoom, { duration: 1.5 });
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+        });
     </script>
 </body>
 </html>
